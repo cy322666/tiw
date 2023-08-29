@@ -19,9 +19,23 @@ class SiteController extends Controller
 
         $amoApi = (new Client(Account::first()))->init();
 
+        $arrRoistat = explode('=', explode(';', $request->toArray()['COOKIES'])[28]);
+
+        if ($arrRoistat[0] == 'roistat_visit') {
+
+            $roistat = $arrRoistat[1];
+        }
+
+        if (empty($roistat)) {
+
+            Log::error(__METHOD__, ['empty roistat']);
+
+            exit;
+        }
+
         $lead = $amoApi->service
             ->leads()
-            ->searchByCustomField($request->tranid, 'TRANID', 1);
+            ->searchByCustomField($roistat, 'roistat', 1);
 
         $lead = $lead->first();
 
