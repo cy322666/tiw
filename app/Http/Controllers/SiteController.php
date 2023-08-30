@@ -38,7 +38,7 @@ class SiteController extends Controller
 
         $lead = $amoApi->service
             ->leads()
-            ->searchByCustomField(++$roistat, 'roistat', 1);
+            ->searchByCustomField(--$roistat, 'roistat', 1);
 
         $lead = $lead->first();
 
