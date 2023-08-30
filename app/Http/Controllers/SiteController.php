@@ -35,10 +35,10 @@ class SiteController extends Controller
 
             exit;
         }
-
+//dd(--$roistat);
         $lead = $amoApi->service
             ->leads()
-            ->searchByCustomField(--$roistat, 'roistat', 1);
+            ->searchByCustomField((string)--$roistat, 'roistat', 1);
 
         $lead = $lead->first();
 
@@ -62,6 +62,7 @@ class SiteController extends Controller
             $lead->cf('КОГДА_ПЛАНИРУЕТЕ_ОТКРЫВАТЬ_КОФЕЙНЮ')->setValue($d);
             $lead->cf('НАСКОЛЬКО_ВАМ_ИНТЕРЕСЕН_БИЗНЕС_НА_КОФЕЙНЯХ_САМООБСЛУЖИВАНИЯ')->setValue($e);
             $lead->cf('ИЗ_КАКОГО_ВЫ_ГОРОДА')->setValue($f);
+            $lead->save();
 
             $lead->attachTag('квиз');
 
