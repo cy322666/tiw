@@ -86,34 +86,34 @@ class Client
 
     public function initLogs(): Client
     {
-        $this->service->queries->onResponseCode(429, function(\Ufee\Amo\Base\Models\QueryModel $query) {
-            \App\Models\Log::query()->create([
-                'code' => 429,
-                'url'  => $query->getUrl(),
-                'method'  => $query->method,
-                'details' => json_encode($query->toArray()),
-            ]);
-        });
-        $this->service->queries->listen(function(\Ufee\Amo\Base\Models\QueryModel $query) {
+//        $this->service->queries->onResponseCode(429, function(\Ufee\Amo\Base\Models\QueryModel $query) {
+//            \App\Models\Log::query()->create([
+//                'code' => 429,
+//                'url'  => $query->getUrl(),
+//                'method'  => $query->method,
+//                'details' => json_encode($query->toArray()),
+//            ]);
+//        });
+//        $this->service->queries->listen(function(\Ufee\Amo\Base\Models\QueryModel $query) {
 
-            $log = \App\Models\Log::query()->create([
-                'code'  => $query->response->getCode(),
-                'url'   => $query->getUrl(),
-                'start' => $query->startDate(),
-                'end'   => $query->endDate(),
-                'method'  => $query->method,
-                'details' => json_encode($query->toArray()),
-            ]);
+//            $log = \App\Models\Log::query()->create([
+//                'code'  => $query->response->getCode(),
+//                'url'   => $query->getUrl(),
+//                'start' => $query->startDate(),
+//                'end'   => $query->endDate(),
+//                'method'  => $query->method,
+//                'details' => json_encode($query->toArray()),
+//            ]);
 
 //            print_r($query->headers);
-            if ($query->response->getCode() === 0) {
-
-                $log->error = $query->response->getError();
-            } else
-                $log->data = strlen($query->response->getData() > 1) ? $query->response->getData() : [];
-
-            $log->save();
-        });
+//            if ($query->response->getCode() === 0) {
+//
+//                $log->error = $query->response->getError();
+//            } else
+//                $log->data = strlen($query->response->getData() > 1) ? $query->response->getData() : [];
+//
+//            $log->save();
+//        });
 
         return $this;
     }
