@@ -25,7 +25,7 @@ class SiteController extends Controller
 
             if(strripos($value, 'roistat_visit=') !== false) {
 
-                $roistat = trim(explode('=', $value)[1]);
+                $roistat = (int)trim(explode('=', $value)[1]);
             }
         }
 
@@ -38,7 +38,7 @@ class SiteController extends Controller
 
         $lead = $amoApi->service
             ->leads()
-            ->searchByCustomField($roistat, 'roistat', 1);
+            ->searchByCustomField(++$roistat, 'roistat', 1);
 
         $lead = $lead->first();
 
@@ -46,6 +46,7 @@ class SiteController extends Controller
 
             Log::info(__METHOD__, [
                 'lead_id' => $lead->id,
+                'roistat' => $roistat,
             ]);
 
             $a = $request->Рассматривали_ли_уже_потенциальные_места_для_установки_своей_кофейни_самообслуживания;
