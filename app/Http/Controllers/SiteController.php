@@ -19,11 +19,14 @@ class SiteController extends Controller
 
         $amoApi = (new Client(Account::first()))->init();
 
-        $arrRoistat = explode('=', explode(';', $request->toArray()['COOKIES'])[28]);
+        $arrRoistat = explode(';', $request->toArray()['COOKIES']);
 
-        if (trim($arrRoistat[0]) == 'roistat_visit') {
+        foreach ($arrRoistat as $value) {
 
-            $roistat = $arrRoistat[1];
+            if(strripos($value, 'roistat_visit=') !== false) {
+
+                $roistat = trim(explode('=', $value)[1]);
+            }
         }
 
         if (empty($roistat)) {
