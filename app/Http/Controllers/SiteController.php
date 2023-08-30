@@ -77,6 +77,7 @@ class SiteController extends Controller
                 '',
                 'Из_какого_вы_города - '.$f,
             ]));
-        }
+        } else
+            Log::info(__METHOD__, ['lead no found']);
     }
 }
