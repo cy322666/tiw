@@ -62,9 +62,9 @@ class SiteController extends Controller
             $lead->cf('КОГДА_ПЛАНИРУЕТЕ_ОТКРЫВАТЬ_КОФЕЙНЮ')->setValue($d);
             $lead->cf('НАСКОЛЬКО_ВАМ_ИНТЕРЕСЕН_БИЗНЕС_НА_КОФЕЙНЯХ_САМООБСЛУЖИВАНИЯ')->setValue($e);
             $lead->cf('ИЗ_КАКОГО_ВЫ_ГОРОДА')->setValue($f);
-            $lead->save();
 
             $lead->attachTag('квиз');
+            $lead->save();
 
             Notes::addOne($lead, implode("\n", [
                 'Рассматривали_ли_уже_потенциальные_места_для_установки_своей_кофейни_самообслуживания - '.$a,
