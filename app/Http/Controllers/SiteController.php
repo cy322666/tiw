@@ -59,6 +59,7 @@ class SiteController extends Controller
             Log::info(__METHOD__, [
                 'lead_id' => $lead->id,
                 'roistat' => $roistat,
+                'segment' => $segment,
             ]);
 
             $a = $request->Рассматривали_ли_уже_потенциальные_места_для_установки_своей_кофейни_самообслуживания;
