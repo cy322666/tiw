@@ -17,6 +17,18 @@ class SiteController extends Controller
     {
         Log::info(__METHOD__, $request->toArray());
 
+        $segment = static::getSegment($request);
+
+        $note = match ($segment) {
+            'hot'   => 'Деньги есть / Желание есть / Скоро хочет открыть - Закрыть здесь и сейчас',
+            'offer' => 'Деньги есть / Желание есть / Не знает, когда откроет - Ускорить офером',
+            'idea'  => 'Деньги есть / Желания нет или не выявлено / Не знает, когда откроет - Соблазнить идеей и офером',
+            'call'  => 'Денег нет / Желание есть / Скоро хочет открыть - Аккуратный прозвон, но больше догрев',
+            'lazy'  => 'Деньги есть / Желания нет или не выявлено / Не знает, когда откроет',
+            'academy' => 'Денег нет / Желание есть / Скоро хочет открыть',
+            default => 'Неопределенный - Аккуратный прозвон, но больше догрев'
+        };
+
         $amoApi = (new Client(Account::first()))->init();
 
         $arrRoistat = explode(';', $request->toArray()['COOKIES']);
@@ -35,7 +47,7 @@ class SiteController extends Controller
 
             exit;
         }
-//dd(--$roistat);
+
         $lead = $amoApi->service
             ->leads()
             ->searchByCustomField((string)--$roistat, 'roistat', 1);
@@ -66,6 +78,8 @@ class SiteController extends Controller
             $lead->attachTag('квиз');
             $lead->save();
 
+            Notes::addOne($lead, $note);
+
             Notes::addOne($lead, implode("\n", [
                 'Рассматривали_ли_уже_потенциальные_места_для_установки_своей_кофейни_самообслуживания - '.$a,
                 '',
@@ -81,5 +95,124 @@ class SiteController extends Controller
             ]));
         } else
             Log::info(__METHOD__, ['lead no found']);
+    }
+
+    private static function getSegment(Request $request): string
+    {
+        $variants = [
+            'hot' => [
+                'count' => 0,
+                'Очень интересен',
+                ['В течение года', 'Через месяц'],
+                'Да, средства есть',
+            ],
+            'offer' => [
+                'count' => 0,
+                ['Очень интересен', 'В целом интересен'],
+                ['В течение года', 'Еще не определился', 'Через 3 месяца'],
+                'Да, средства есть',
+            ],
+            'idea' => [
+                'count' => 0,
+                ['Да, средства есть', 'Найду, если подойдут условия'],
+                ['Рассматриваю разные бизнесы', 'Затрудняюсь ответить'],
+                ['В течение года', 'Еще не определился'],
+            ],
+            'academy' => [
+                'count' => 0,
+                ['С этим есть сложности', 'Нет, таких средств точно нет'],
+                ['В целом интересен', 'Очень интересен'],
+                ['В ближайшее время', 'Через месяц', 'Через 3 месяца'],
+            ],
+            'call' => [
+                'count' => 0,
+                ['С этим есть сложности', 'Нет, таких средств точно нет'],
+                ['В целом интересен', 'Очень интересен'],
+                ['В течение года', 'Еще не определился'],
+            ],
+            'lazy' => [
+                'count' => 0,
+                ['С этим есть сложности', 'Нет, таких средств точно нет'],
+                ['Рассматриваю разные бизнесы', 'Затрудняюсь ответить'],
+                ['В течение года', 'Еще не определился'],
+            ]
+        ];
+
+        $data = $request->toArray();
+
+        foreach ($data as $key => $value) {
+
+            if ($key == 'Name' || $key == 'Из_какого_вы_города') continue;
+
+            Log::info('старт проверки поля '.$key.' => '.$value);
+
+            foreach ($variants as $variant => $array) {
+
+                Log::info('сравниваем с массивом '.$variant.' => ', $array);
+
+                foreach ($array as $item) {
+
+                    if (is_array($item)) {
+
+                        Log::info('массив значений', $item);
+
+                        foreach ($item as $item1) {
+
+                            if ($item1 == $value) {
+
+                                ++$variants[$variant]['count'];
+
+                                Log::info($item1.'== '.$value.' count: '. $variants[$variant]['count']);
+
+                                if ($variants[$variant]['count'] == 3) {
+
+                                    break 4;
+                                }
+
+                                break 3;
+                            }
+                        }
+
+                    } elseif ($item == $value) {
+
+                        ++$variants[$variant]['count'];
+
+                        Log::info($item.'== '.$value.' count: '.$variants[$variant]['count']);
+
+                        if ($variants[$variant]['count'] == 3) {
+
+                            break 3;
+                        }
+
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        foreach ($variants as $variant => $key) {
+
+            if ($key['count'] == 3)
+
+                return $variant;
+        }
+
+        return 'undefined';
+
+        //'Хочу совмещать основную работу с дополнительным заработком',
+        //'В целом интересен',
+        //'Найду, если подойдут условия',
+        //Рассматриваю разные бизнесы
+        //Затрудняюсь ответить
+        //В ближайшее время
+        //Через месяц
+        //Через 3 месяца
+        //В течение года
+        //Еще не определилися
+        //Да, средства есть
+        //С этим есть сложности
+        //Нет, таких средств точно нет
+        //Хочу начать бизнес, который не требует больших вложений денег и времени
+        //Люблю кофе и хочу открыть связанный с ним бизнес
     }
 }
