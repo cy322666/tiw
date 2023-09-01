@@ -50,11 +50,14 @@ class SiteController extends Controller
 
         $leads = $amoApi->service
             ->leads()
-            ->searchByCustomField((string)$roistat, 'roistat', 10);
+            ->searchByCustomField((string)$roistat, 'roistat', 10)
+            ->toArray();
 
         foreach ($leads as $lead) {
 
-            if ($lead->status_id !== 142 && $lead->status_id !== 143) {
+            if ($lead['status_id'] !== 142 && $lead['status_id'] !== 143) {
+
+                $lead = $amoApi->service->leads()->find($lead['id']);
 
                 break;
             }
