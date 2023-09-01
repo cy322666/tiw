@@ -48,13 +48,19 @@ class SiteController extends Controller
             exit;
         }
 
-        $lead = $amoApi->service
+        $leads = $amoApi->service
             ->leads()
-            ->searchByCustomField((string)$roistat, 'roistat', 1);
+            ->searchByCustomField((string)$roistat, 'roistat', 10);
 
-        $lead = $lead->first();
+        foreach ($leads as $lead) {
 
-        if($lead) {
+            if ($lead->status_id !== 142 && $lead->status_id !== 143) {
+
+                break;
+            }
+        }
+
+        if(!empty($lead)) {
 
             Log::info(__METHOD__, [
                 'lead_id' => $lead->id,
