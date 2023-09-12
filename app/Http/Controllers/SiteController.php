@@ -85,6 +85,13 @@ class SiteController extends Controller
             $lead->cf('НАСКОЛЬКО_ВАМ_ИНТЕРЕСЕН_БИЗНЕС_НА_КОФЕЙНЯХ_САМООБСЛУЖИВАНИЯ')->setValue($e);
             $lead->cf('ИЗ_КАКОГО_ВЫ_ГОРОДА')->setValue($f);
 
+            $tag = match ($segment) {
+                'hot', 'offer', 'idea' => 'ГорячийКвиз',
+                'academy', 'call' => 'ТёплыйКвиз',
+                default => 'ХолодныйКвиз',
+            };
+
+            $lead->attachTag($tag);
             $lead->attachTag('квиз');
             $lead->save();
 
