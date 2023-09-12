@@ -161,25 +161,17 @@ class SiteController extends Controller
 
             if ($key == 'Name' || $key == 'Из_какого_вы_города') continue;
 
-            Log::info('старт проверки поля '.$key.' => '.$value);
-
             foreach ($variants as $variant => $array) {
-
-                Log::info('сравниваем с массивом '.$variant.' => ', $array);
 
                 foreach ($array as $item) {
 
                     if (is_array($item)) {
-
-                        Log::info('массив значений', $item);
 
                         foreach ($item as $item1) {
 
                             if ($item1 == $value) {
 
                                 ++$variants[$variant]['count'];
-
-                                Log::info($item1.'== '.$value.' count: '. $variants[$variant]['count']);
 
                                 if ($variants[$variant]['count'] == 3) {
 
@@ -193,8 +185,6 @@ class SiteController extends Controller
                     } elseif ($item == $value) {
 
                         ++$variants[$variant]['count'];
-
-                        Log::info($item.'== '.$value.' count: '.$variants[$variant]['count']);
 
                         if ($variants[$variant]['count'] == 3) {
 
