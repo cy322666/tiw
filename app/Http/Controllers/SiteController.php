@@ -110,6 +110,11 @@ class SiteController extends Controller
                 '',
                 'Из_какого_вы_города - '.$f,
             ]));
+
+            $contact = $lead->contact;
+            $contact->name = $request->Name;
+            $contact->save();
+
         } else
             Log::info(__METHOD__, ['lead no found']);
     }
