@@ -51,9 +51,9 @@ class TgController extends Controller
     {
         Log::info(__METHOD__, $request->toArray());
 
-        if (!empty($request->message->new_chat_member->id)) {
+        if (!empty($request->message['new_chat_member']['id'])) {
 
-            $memberInfo = $request->message->new_chat_member;
+            $memberInfo = $request->message['new_chat_member'];
 
             $transaction = Transaction::query()
                 ->where('wait', true)
@@ -62,13 +62,20 @@ class TgController extends Controller
 
             if ($transaction) {
 
-                $transaction->msg_id = $request->message->message_id;
-                $transaction->user_id = $memberInfo->id;
-                $transaction->is_bot = $memberInfo->is_bot;
-                $transaction->first_name = $memberInfo->first_name;
-                $transaction->username = $memberInfo->aleksandr_swedish;
+                $transaction->msg_id  = $request['message_id'];
+                $transaction->user_id = $memberInfo['id'];
+                $transaction->is_bot  = $memberInfo['is_bot'];
+                $transaction->first_name = $memberInfo['first_name'];
+                $transaction->username   = $memberInfo['username'];
                 $transaction->wait = false;
                 $transaction->save();
+
+                $amoApi = (new Client(Account::first()))->init();
+
+                $lead = $amoApi->service->leads()->find($transaction->lead_id);
+
+                $lead->attachTag('вступилВчат');
+                $lead->save();
             }
         }
     }
