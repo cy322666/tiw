@@ -164,6 +164,16 @@ class SiteController extends Controller
         $lead->cf('utm_content')->setValue($request->utm_content);
         $lead->cf('utm_campaign')->setValue($request->utm_campaign);
 
+        $arrayUtms = $this->parseCookies($request);
+
+        foreach ($arrayUtms as $key => $utm) {
+
+            try {
+                $lead->cf($key)->setValue($utm);
+
+            } catch (\Throwable $exception) {}
+        }
+
         $lead->attachTag($request->type == 'sale' ? 'веб-подарок+скидка' : 'веб-подарок');
         $lead->attachTag('tilda');
         $lead->save();
@@ -174,6 +184,25 @@ class SiteController extends Controller
             'lead_id' => $lead->id,
             'contact_id' => $contact->id,
         ]);
+    }
+
+    public function parseCookies($request) : array
+    {
+        $utms = [];
+
+        if (!empty($request->COOKIES)) {
+
+            $arrayCookies = explode(';', $request->COOKIES ?? '');
+
+            foreach ($arrayCookies as $cookie) {
+
+                $array = explode('=', $cookie);
+
+                $utms[trim($array[0])] = trim(urldecode($array[1] ?? ''));
+            }
+        }
+
+        return $utms;
     }
 
     private static function getSegment(Request $request): string
