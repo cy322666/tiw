@@ -38,8 +38,11 @@ class TgController extends Controller
             ->where('lead_id', $request->lead_id)
             ->first();
 
-        $transaction->wait = true;
-        $transaction->save();
+        if ($transaction) {
+
+            $transaction->wait = true;
+            $transaction->save();
+        }
 
         return Redirect::to(Env::get('TG_CHAT_LINK'));
     }
