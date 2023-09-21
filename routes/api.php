@@ -23,6 +23,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('site/quiz', [SiteController::class, 'quiz']);
 
+Route::post('site/web', [SiteController::class, 'web']);
+
 Route::post('tools/active', [ToolsController::class, 'active']);
 
 Route::post('tg/link', [TgController::class, 'link']);
