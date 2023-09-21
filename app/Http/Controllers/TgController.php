@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\Tg\Transaction;
 use App\Services\amoCRM\Client;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Log;
@@ -46,5 +47,26 @@ class TgController extends Controller
     public function hook(Request $request)
     {
         Log::info(__METHOD__, $request->toArray());
+
+        if (!empty($request->message->new_chat_member->id)) {
+
+            $memberInfo = $request->message->new_chat_member;
+
+            $transaction = Transaction::query()
+                ->where('wait', true)
+                ->where('updated_at', '>', Carbon::now()->subMinutes(5)->format('Y-m-d H:i:s'))
+                ->first();
+
+            if ($transaction) {
+
+                $transaction->msg_id = $request->message->message_id;
+                $transaction->user_id = $memberInfo->id;
+                $transaction->is_bot = $memberInfo->is_bot;
+                $transaction->first_name = $memberInfo->first_name;
+                $transaction->username = $memberInfo->aleksandr_swedish;
+                $transaction->wait = false;
+                $transaction->save();
+            }
+        }
     }
 }
