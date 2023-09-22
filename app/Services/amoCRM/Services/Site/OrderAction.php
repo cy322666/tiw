@@ -31,7 +31,7 @@ class OrderAction
             $productType = NoteHelper::getTypeProduct($body);
 
             $contact = Contacts::search([
-                'Телефоны' => $site->phone,
+                'Телефон' =>  $site->phone,
                 'Почта'    => $site->email ?? null,
             ], $this->amoApi);
 
@@ -40,7 +40,7 @@ class OrderAction
                 $contact = Contacts::create($this->amoApi, $body->firstname);
                 $contact = Contacts::update($contact, [
                     'Почта'    => $site->email,
-                    'Телефоны' => [$site->phone],
+                    'Телефон'  => [$site->phone],
                 ]);
 
                 $lead = Leads::create($contact, [

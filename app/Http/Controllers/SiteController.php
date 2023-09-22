@@ -141,7 +141,7 @@ class SiteController extends Controller
             " - Телефон : $phone",
         ]);
 
-        $contact = Contacts::search(['Телефоны' => [Contacts::clearPhone($phone)]], $amoApi);
+        $contact = Contacts::search(['Телефон' => Contacts::clearPhone($phone)], $amoApi);
 
         if (!$contact) {
 

@@ -14,7 +14,7 @@ abstract class Contacts extends Client
 
             $contacts = $client->service
                 ->contacts()
-                ->searchByPhone(self::clearPhone($arrayFields['Телефоны'][0]));
+                ->searchByPhone(self::clearPhone($arrayFields['Телефон']));
         }
 
         if ($contacts == null || $contacts->first() == null) {
