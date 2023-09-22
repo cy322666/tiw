@@ -141,12 +141,12 @@ class SiteController extends Controller
             " - Телефон : $phone",
         ]);
 
-        $contact = Contacts::search(['Телефоны' => [$phone]], $amoApi);
+        $contact = Contacts::search(['Телефоны' => [Contacts::clearPhone($phone)]], $amoApi);
 
         if (!$contact) {
 
-            $contact = Contacts::create($amoApi, $name);
-            $contact = Contacts::update($contact, ['Телефоны' => [$phone]]);
+            $contact = Contacts::create($amoApi, $name ?? 'Неизвестно');
+            $contact = Contacts::update($contact, ['Телефоны' => [Contacts::clearPhone($phone)]]);
         }
 
         $leadActive = Leads::search($contact, $amoApi, [6770222]);
