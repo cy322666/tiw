@@ -157,6 +157,8 @@ class SiteController extends Controller
                 [],
                 $request->type == 'sale' ? 'Заявки с вебинара подарок+скидка' : 'Заявки с вебинара подарок',
             );
+        else
+            $lead = $leadActive;
 
         $lead->cf('utm_term')->setValue($request->utm_term);
         $lead->cf('utm_source')->setValue($request->utm_source);
