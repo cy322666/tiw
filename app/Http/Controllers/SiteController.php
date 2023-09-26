@@ -207,14 +207,14 @@ class SiteController extends Controller
         return $utms;
     }
 
-    private static function getSegment(Request $request): string
+    private static function getSegment($request): string
     {
         $variants = [
             'hot' => [
                 'count' => 0,
-                'Очень интересен',
+                ['Очень интересен', 'В целом интересен'],
                 ['В течение года', 'Через месяц'],
-                'Да, средства есть',
+                ['Да, средства есть', 'Найду, если подойдут условия']
             ],
             'offer' => [
                 'count' => 0,
@@ -224,7 +224,7 @@ class SiteController extends Controller
             ],
             'idea' => [
                 'count' => 0,
-                ['Да, средства есть', 'Найду, если подойдут условия'],
+                ['Найду, если подойдут условия'],
                 ['Рассматриваю разные бизнесы', 'Затрудняюсь ответить'],
                 ['В течение года', 'Еще не определился'],
             ],
@@ -248,9 +248,7 @@ class SiteController extends Controller
             ]
         ];
 
-        $data = $request->toArray();
-
-        foreach ($data as $key => $value) {
+        foreach ($request as $key => $value) {
 
             if ($key == 'Name' || $key == 'Из_какого_вы_города') continue;
 
