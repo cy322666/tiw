@@ -214,13 +214,13 @@ class SiteController extends Controller
                 'count' => 0,
                 ['Очень интересен', 'В целом интересен'],
                 ['В течение года', 'Через месяц'],
-                ['Да, средства есть', 'Найду, если подойдут условия']
+                ['Да, средства есть', 'Найду, если подойдут условия']//+3
             ],
             'offer' => [
                 'count' => 0,
                 ['Очень интересен', 'В целом интересен'],
                 ['В течение года', 'Еще не определился', 'Через 3 месяца'],
-                'Да, средства есть',
+                'Да, средства есть',//+3
             ],
             'idea' => [
                 'count' => 0,
@@ -262,7 +262,11 @@ class SiteController extends Controller
 
                             if ($item1 == $value) {
 
-                                ++$variants[$variant]['count'];
+                                if ($value == 'Да, средства есть' || $value == 'Найду, если подойдут условия') {
+
+                                    $variants[$variant]['count'] =+ 2;
+                                } else
+                                    ++$variants[$variant]['count'];
 
                                 if ($variants[$variant]['count'] == 3) {
 
@@ -275,7 +279,11 @@ class SiteController extends Controller
 
                     } elseif ($item == $value) {
 
-                        ++$variants[$variant]['count'];
+                        if ($value == 'Да, средства есть' || $value == 'Найду, если подойдут условия') {
+
+                            $variants[$variant]['count'] =+ 2;
+                        } else
+                            ++$variants[$variant]['count'];
 
                         if ($variants[$variant]['count'] == 3) {
 

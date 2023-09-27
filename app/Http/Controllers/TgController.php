@@ -79,4 +79,9 @@ class TgController extends Controller
             }
         }
     }
+
+    public function constructor(Request $request)
+    {
+        Log::info(__METHOD__, $request->toArray());
+    }
 }
