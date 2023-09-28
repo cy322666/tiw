@@ -27,6 +27,8 @@ Route::post('site/web', [SiteController::class, 'web']);
 
 Route::post('tools/active', [ToolsController::class, 'active']);
 
+Route::post('tools/utms', [ToolsController::class, 'utms']);
+
 Route::post('tg/link', [TgController::class, 'link']);
 
 Route::post('tg/hook', [TgController::class, 'hook']);

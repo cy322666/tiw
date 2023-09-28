@@ -31,6 +31,16 @@ abstract class Leads
         return $leads;
     }
 
+    public static function searchOld($contact, $client)
+    {
+        return $contact->leads->filter(function($lead) use ($client) {
+
+            return $lead;
+
+        })->sortBy('created_at', 'DESC')?->first();
+    }
+
+
     public static function searchSuccess($contact, $client, int|array $pipelines) : Lead|false
     {
         return $contact->leads->filter(function($lead) use ($client, $pipelines) {
