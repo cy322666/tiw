@@ -37,7 +37,7 @@ abstract class Leads
 
             return $lead;
 
-        })->sortBy('created_at', 'DESC')?->first();
+        })->sortBy('created_at', 'ASC')?->first();
     }
 
 
