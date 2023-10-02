@@ -47,8 +47,6 @@ class ToolsController extends Controller
     {
         Log::info(__METHOD__, $request->toArray());
 
-        sleep(3);
-
         $leadId = $request->toArray()['leads']['add'][0]['id'];
 
         $amoApi = (new Client(Account::query()->first()))
