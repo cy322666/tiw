@@ -38,17 +38,17 @@ class TgController extends Controller
     //перенесено на сторону конструктора
     public function redirect(Request $request)
     {
-//        $transaction = Transaction::query()
-//            ->where('lead_id', $request->lead_id)
-//            ->first();
-//
-//        if ($transaction) {
-//
-//            $transaction->wait = true;
-//            $transaction->save();
-//        }
-//
-//        return Redirect::to(Env::get('TG_CHAT_LINK'));
+        $transaction = Transaction::query()
+            ->where('lead_id', $request->lead_id)
+            ->first();
+
+        if ($transaction) {
+
+            $transaction->wait = true;
+            $transaction->save();
+        }
+
+        return Redirect::to(Env::get('TG_CHAT_LINK'));
     }
 
     //своя реализация кажется не актуальна
