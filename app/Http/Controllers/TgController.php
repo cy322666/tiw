@@ -94,7 +94,7 @@ class TgController extends Controller
 
             foreach ($request->leads['update'][0]['tags'] as $tag) {
 
-                if ($tag['отгрузка'] == 'отгрузка') {
+                if ($tag['name'] == 'отгрузка') {
 
                     Log::info(__METHOD__, [
                         'отгрузка найдена',
