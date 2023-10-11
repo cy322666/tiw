@@ -89,22 +89,47 @@ class TgController extends Controller
 
     public function shipment(Request $request)
     {
-        Log::info(__METHOD__, $request->toArray());
+        if ($request->leads['update'][0]['status_id'] == 142 &&
+            $request->leads['update'][0]['pipeline_id'] == 6770222) {
+
+            foreach ($request->leads['update'][0]['tags'] as $tag) {
+
+                if ($tag['отгрузка'] == 'отгрузка') {
+
+                    Log::info(__METHOD__, [
+                        'отгрузка найдена',
+                        'lead_id' => $request->leads['update'][0]['id'],
+                    ]);
+
+                    $amoApi = (new Client(Account::first()))->init();
+
+                    $lead = $amoApi->service->leads()->find($request->leads['update'][0]['id']);
+
+                    $tgId = $lead->contact->getValue('tg_id') ?? exit;
+
+                    Http::get('https://nicktech.ru/TH/add_to_bot.php', [
+                        'user_id' => $tgId,
+                        'api_key' => \env('TG_CONSTRUCTOR_API_KEY'),
+                        'channel' => 'TH',
+                        'bot_id'  => \env('TG_CONSTRUCTOR_BOT_ID'),
+                        'step_id' => \env('TG_CONSTRUCTOR_STEP_ID'),
+                        'force'   => 1,
+                    ]);
+
+                    Log::info(__METHOD__, [
+                        'отгрузка отправлена',
+                        'tg_id' => $tgId,
+                        'lead_id' => $request->leads['update'][0]['id'],
+                    ]);
+                }
+            }
+        }
     }
 
     // при переходе по ссылке отправляется хук сюда
     public function constructor(Request $request)
     {
         Log::info(__METHOD__, $request->toArray());
-
-//        Http::get('https://nicktech.ru/TH/add_to_bot.php', [
-//            'user_id' => $request->tg_id,
-//            'api_key' => \env('TG_CONSTRUCTOR_API_KEY'),
-//            'channel' => 'TH',
-//            'bot_id'  => \env('TG_CONSTRUCTOR_BOT_ID'),
-//            'step_id' => \env('TG_CONSTRUCTOR_STEP_ID'),
-//            'force'   => 1,
-//        ]);
 
         $amoApi = (new Client(Account::first()))->init();
 
