@@ -105,7 +105,7 @@ class TgController extends Controller
 
                     $lead = $amoApi->service->leads()->find($request->leads['update'][0]['id']);
 
-                    $tgId = $lead->contact->getValue('tg_id') ?? exit;
+                    $tgId = $lead->contact->сf('tg_id')->getValue() ?? exit;
 
                     Http::get('https://nicktech.ru/TH/add_to_bot.php', [
                         'user_id' => $tgId,
