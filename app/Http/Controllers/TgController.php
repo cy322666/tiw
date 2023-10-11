@@ -48,7 +48,10 @@ class TgController extends Controller
             $transaction->save();
         }
 
-        \redirect(\env('TG_CHAT_LINK').'?start='.$request->lead_id);
+        $url = \env('TG_CHAT_LINK').'?start='.$request->lead_id;
+
+        dd($url);
+        return Redirect::to($url);
     }
 
     //своя реализация кажется не актуальна
