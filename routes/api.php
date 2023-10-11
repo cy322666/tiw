@@ -35,5 +35,7 @@ Route::post('tg/hook', [TgController::class, 'hook']);
 
 Route::get('tg/redirect', [TgController::class, 'redirect']);
 
+Route::post('tg/shipment', [TgController::class, 'shipment']);
+
 Route::post('tg/constructor', [TgController::class, 'constructor']);
 
