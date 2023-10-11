@@ -87,6 +87,11 @@ class TgController extends Controller
 //        }
     }
 
+    public function shipment(Request $request)
+    {
+        Log::info(__METHOD__, $request->toArray());
+    }
+
     // при переходе по ссылке отправляется хук сюда
     public function constructor(Request $request)
     {
