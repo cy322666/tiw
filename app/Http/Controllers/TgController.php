@@ -92,14 +92,14 @@ class TgController extends Controller
     {
         Log::info(__METHOD__, $request->toArray());
 
-        Http::get('https://nicktech.ru/TH/add_to_bot.php', [
-            'user_id' => $request->tg_id,
-            'api_key' => \env('TG_CONSTRUCTOR_API_KEY'),
-            'channel' => 'TH',
-            'bot_id'  => \env('TG_CONSTRUCTOR_BOT_ID'),
-            'step_id' => \env('TG_CONSTRUCTOR_STEP_ID'),
-            'force'   => 1,
-        ]);
+//        Http::get('https://nicktech.ru/TH/add_to_bot.php', [
+//            'user_id' => $request->tg_id,
+//            'api_key' => \env('TG_CONSTRUCTOR_API_KEY'),
+//            'channel' => 'TH',
+//            'bot_id'  => \env('TG_CONSTRUCTOR_BOT_ID'),
+//            'step_id' => \env('TG_CONSTRUCTOR_STEP_ID'),
+//            'force'   => 1,
+//        ]);
 
         $amoApi = (new Client(Account::first()))->init();
 
