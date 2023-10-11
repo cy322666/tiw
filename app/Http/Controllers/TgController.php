@@ -50,7 +50,6 @@ class TgController extends Controller
 
         $url = 'https://t.me/Takeandwakerussia_bot?start='.$request->lead_id;
 
-        dd($url);
         return Redirect::to($url);
     }
 
