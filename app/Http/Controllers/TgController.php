@@ -111,7 +111,7 @@ class TgController extends Controller
 
                     $contact = $lead->contact;
 
-                    $tgId = $contact->сf('tg_id')->getValue() ?? exit;
+                    $tgId = $contact->cf('tg_id')->getValue() ?? exit;
 
                     Http::get('https://nicktech.ru/TH/add_to_bot.php', [
                         'user_id' => $tgId,
