@@ -48,7 +48,7 @@ class TgController extends Controller
             $transaction->save();
         }
 
-        $url = \env('TG_CHAT_LINK').'?start='.$request->lead_id;
+        $url = 'https://t.me/Takeandwakerussia_bot?start='.$request->lead_id;
 
         dd($url);
         return Redirect::to($url);
