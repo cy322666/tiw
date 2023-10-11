@@ -105,7 +105,8 @@ class TgController extends Controller
 
         $lead = $amoApi->service->leads()->find($request->lead_id);
 
-        $contact = $lead->contact->cf('TelegramId_WZ')->setValue($request->tg_id);
+        $contact = $lead->contact;
+        $contact->cf('tg_id')->setValue($request->tg_id);
         $contact->save();
     }
 }
