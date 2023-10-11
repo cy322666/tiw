@@ -92,6 +92,10 @@ class TgController extends Controller
         if ($request->leads['update'][0]['status_id'] == 142 &&
             $request->leads['update'][0]['pipeline_id'] == 6770222) {
 
+            if (empty($request->leads['update'][0]['tags'])) exit;
+
+            Log::info(__METHOD__, $request->toArray());
+
             foreach ($request->leads['update'][0]['tags'] as $tag) {
 
                 if ($tag['name'] == 'отгрузка') {
