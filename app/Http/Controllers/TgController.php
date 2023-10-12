@@ -8,6 +8,7 @@ use App\Services\amoCRM\Client;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Env;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
@@ -100,6 +101,16 @@ class TgController extends Controller
 
                 if ($tag['name'] == 'отгрузка') {
 
+                    foreach ($request->leads['update'][0]['custom_fields'] as $field) {
+
+                        if ($field['name'] == 'Отгрузка отправлена' && $field['values'][0]['value'] == '1') {
+
+                            Log::info(__METHOD__, ['повторная отправка']);
+
+                            exit;
+                        }
+                    }
+
                     Log::info(__METHOD__, [
                         'отгрузка найдена',
                         'lead_id' => $request->leads['update'][0]['id'],
@@ -108,6 +119,9 @@ class TgController extends Controller
                     $amoApi = (new Client(Account::first()))->init();
 
                     $lead = $amoApi->service->leads()->find($request->leads['update'][0]['id']);
+
+                    $lead->cf('Отгрузка отправлена')->setValue('1');
+                    $lead->save();
 
                     $contact = $lead->contact;
 
