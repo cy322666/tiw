@@ -39,3 +39,5 @@ Route::post('tg/shipment', [TgController::class, 'shipment']);
 
 Route::post('tg/constructor', [TgController::class, 'constructor']);
 
+Route::post('tg/quiz', [TgController::class, 'quiz']);
+

@@ -54,6 +54,11 @@ class TgController extends Controller
         return Redirect::to($url);
     }
 
+    public function quiz(Request $request)
+    {
+        Log::info(__METHOD__, $request->toArray());
+    }
+
     //своя реализация кажется не актуальна
     public function hook(Request $request)
     {
