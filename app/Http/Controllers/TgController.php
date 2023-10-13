@@ -130,6 +130,8 @@ class TgController extends Controller
 
     public function shipment(Request $request)
     {
+        Log::info(__METHOD__, $request->toArray());
+
         if ($request->leads['update'][0]['status_id'] == 142 &&
             $request->leads['update'][0]['pipeline_id'] == 6770222) {
 
