@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\Tg\Transaction;
 use App\Services\amoCRM\Client;
+use App\Services\amoCRM\Models\Contacts;
+use App\Services\amoCRM\Models\Leads;
+use App\Services\amoCRM\Models\Notes;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Env;
@@ -57,6 +60,38 @@ class TgController extends Controller
     public function quiz(Request $request)
     {
         Log::info(__METHOD__, $request->toArray());
+
+        $amoApi = (new Client(Account::first()))->init();
+
+        $text  = $request->comment;
+        $phone = $request->phone;
+        $name  = $request->name;
+        $email = $request->email;
+
+        $contact = Contacts::search([
+            'Телефоны' => [$phone],
+            'Почта' => $email,
+        ], $amoApi);
+
+        if (!$contact)
+            $contact = Contacts::create($amoApi, $name);
+
+        $contact = $amoApi
+            ->service
+            ->contacts()
+            ->find($contact->id);
+
+        $lead = Leads::create(
+            $contact,
+            [],
+            'Заявка Квиз Телеграм бот',
+        );
+
+        $lead->attachTag('quiz');
+        $lead->attachTag('bot');
+        $lead->save();
+
+        Notes::addOne($lead, $text);
     }
 
     //своя реализация кажется не актуальна
