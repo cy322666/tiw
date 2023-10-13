@@ -81,6 +81,11 @@ class TgController extends Controller
             ->contacts()
             ->find($contact->id);
 
+        $contact = Contacts::update($contact, [
+            'Телефоны' => [$phone],
+            'Почта' => $email]
+        );
+
         $lead = Leads::create(
             $contact,
             [],
