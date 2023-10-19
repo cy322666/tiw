@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Services\amoCRM\Client;
+use App\Services\amoCRM\Models\Contacts;
 use App\Services\amoCRM\Models\Leads;
+use App\Services\amoCRM\Models\Notes;
+use App\Services\amoCRM\Models\Tags;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -85,5 +88,56 @@ class ToolsController extends Controller
         }
 
         $contact->save();
+    }
+
+    public function marquiz(Request $request)
+    {
+        Log::info(__METHOD__, $request->toArray());
+
+//        $amoApi = (new Client(Account::query()->first()))
+//            ->init()
+//            ->initLogs();
+//
+//        $phone = '';
+//        $formname = '';
+//        $name = '';
+//        $city = '';
+//        $roistat = '';
+//
+//        $contact = Contacts::search(['Телефоны' => [$phone]], $amoApi);
+//
+//        if (!$contact)
+//            $contact = Contacts::create($amoApi, $name);
+//
+//        $contact = $amoApi
+//            ->service
+//            ->contacts()
+//            ->find($contact->id);
+//
+//        $lead = Leads::create(
+//            $contact, [],
+////            ['status_id' => $statusId,],
+//            $formname,
+//        );
+//
+//
+//        $lead->cf('Город')->setValue($request->city);
+//
+//        $lead->cf('utm_term')->setValue($model->utm_term);
+//        $lead->cf('utm_source')->setValue($model->utm_source);
+//        $lead->cf('utm_medium')->setValue($model->utm_medium);
+//        $lead->cf('utm_content')->setValue($model->utm_content);
+//        $lead->cf('utm_campaign')->setValue($model->utm_campaign);
+//
+//        $lead = Tags::add($lead, 'marquiz');
+//
+//        $lead->attachTag('tilda');
+//        $lead->save();
+//
+//        Notes::addOne($lead, $text);
+//
+//        $model->lead_id = $lead->id;
+//        $model->contact_id = $contact->id;
+//        $model->save();
     }
 }
