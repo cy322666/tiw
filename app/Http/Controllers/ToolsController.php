@@ -127,14 +127,21 @@ class ToolsController extends Controller
 
         $lead = Leads::search($contact, $amoApi, 6770222);
 
-        if (!$lead)
+        if (!$lead) {
+
             $lead = Leads::create(
                 $contact, [],
-    //            ['status_id' => $statusId,],
                 $formname,
             );
+        } else {
 
-//
+            $amoApi->service->ajax()->post('/api/v2/salesbot/run', [
+                'bot_id' => '15949',
+                'entity_id' => $lead->id,
+                'entity_type' => 2,
+            ]);
+        }
+
         $lead->cf('Город')->setValue($city);
 //
 //        $lead->cf('utm_term')->setValue($model->utm_term);
