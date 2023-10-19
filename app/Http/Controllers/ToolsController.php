@@ -103,8 +103,8 @@ class ToolsController extends Controller
         $phone = $request['contacts']['phone'];
         $email = $request['contacts']['email'];
         $formname = 'Новая заявка с Marquiz';
-        $name = $body[0]->a;
-        $city = $body[1]->a;
+        $name = $body[0]['a'];
+        $city = $body[1]['a'];
         $roistat = $request['extra']->cookies->roistat_visit;
 
         $contact = Contacts::search(['Телефоны' => [$phone]], $amoApi);
@@ -140,11 +140,11 @@ class ToolsController extends Controller
 //        $lead->cf('utm_content')->setValue($model->utm_content);
 //        $lead->cf('utm_campaign')->setValue($model->utm_campaign);
 
-        $lead->cf('Квиз. Насколько интересно')->setValue($body[2]->a);
-        $lead->cf('Квиз. Когда планируете')->setValue($body[3]->a);
-        $lead->cf('Квиз. Почему заинтересовала')->setValue($body[5]->a);
-        $lead->cf('Квиз. Рассматривали ли уже')->setValue($body[6]->a);
-        $lead->cf('Квиз. Финансовые возможности')->setValue($body[4]->a);
+        $lead->cf('Квиз. Насколько интересно')->setValue($body[2]['a']);
+        $lead->cf('Квиз. Когда планируете')->setValue($body[3]['a']);
+        $lead->cf('Квиз. Почему заинтересовала')->setValue($body[5]['a']);
+        $lead->cf('Квиз. Рассматривали ли уже')->setValue($body[6]['a']);
+        $lead->cf('Квиз. Финансовые возможности')->setValue($body[4]['a']);
         $lead->cf('roistat')->setValue($roistat);
 
         $lead->attachTag('marquiz');
