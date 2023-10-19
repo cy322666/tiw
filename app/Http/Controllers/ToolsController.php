@@ -107,7 +107,10 @@ class ToolsController extends Controller
         $city = $body[1]['a'];
         $roistat = $request['extra']['cookies']['roistat_visit'];
 
-        $contact = Contacts::search(['Телефоны' => [$phone]], $amoApi);
+        $contact = Contacts::search([
+            'Телефоны' => [$phone],
+            'Почта' => $email,
+        ], $amoApi);
 
         if (!$contact)
             $contact = Contacts::create($amoApi, $name);
