@@ -135,7 +135,7 @@ class ToolsController extends Controller
             );
         } else {
 
-            $amoApi->service->ajax()->post('api/v2/salesbot/run', [
+            $amoApi->service->ajax()->post('api/v2/salesbot/run', [], [
                 'bot_id' => '15949',
                 'entity_id' => $lead->id,
                 'entity_type' => 2,
