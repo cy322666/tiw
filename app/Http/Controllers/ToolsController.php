@@ -94,46 +94,62 @@ class ToolsController extends Controller
     {
         Log::info(__METHOD__, $request->toArray());
 
-//        $amoApi = (new Client(Account::query()->first()))
-//            ->init()
-//            ->initLogs();
+        $amoApi = (new Client(Account::query()->first()))
+            ->init()
+            ->initLogs();
+
+        $body = $request->answers;
+
+        $phone = $request['contacts']->phone;
+        $email = $request['contacts']->email;
+        $formname = 'Новая заявка с Marquiz';
+        $name = $body[0]->a;
+        $city = $body[1]->a;
+        $roistat = $request['extra']->cookies->roistat_visit;
+
+        $contact = Contacts::search(['Телефоны' => [$phone]], $amoApi);
+
+        if (!$contact)
+            $contact = Contacts::create($amoApi, $name);
+
+        $contact = $amoApi
+            ->service
+            ->contacts()
+            ->find($contact->id);
+
+        $contact = Contacts::update($contact, [
+            'Телефоны' => [$phone],
+            'Почта' => $email,
+        ]);
+
+        $lead = Leads::search($contact, $amoApi, 6770222);
+
+        if (!$lead)
+            $lead = Leads::create(
+                $contact, [],
+    //            ['status_id' => $statusId,],
+                $formname,
+            );
+
 //
-//        $phone = '';
-//        $formname = '';
-//        $name = '';
-//        $city = '';
-//        $roistat = '';
-//
-//        $contact = Contacts::search(['Телефоны' => [$phone]], $amoApi);
-//
-//        if (!$contact)
-//            $contact = Contacts::create($amoApi, $name);
-//
-//        $contact = $amoApi
-//            ->service
-//            ->contacts()
-//            ->find($contact->id);
-//
-//        $lead = Leads::create(
-//            $contact, [],
-////            ['status_id' => $statusId,],
-//            $formname,
-//        );
-//
-//
-//        $lead->cf('Город')->setValue($request->city);
+        $lead->cf('Город')->setValue($city);
 //
 //        $lead->cf('utm_term')->setValue($model->utm_term);
 //        $lead->cf('utm_source')->setValue($model->utm_source);
 //        $lead->cf('utm_medium')->setValue($model->utm_medium);
 //        $lead->cf('utm_content')->setValue($model->utm_content);
 //        $lead->cf('utm_campaign')->setValue($model->utm_campaign);
-//
-//        $lead = Tags::add($lead, 'marquiz');
-//
-//        $lead->attachTag('tilda');
-//        $lead->save();
-//
+
+        $lead->cf('Квиз. Насколько интересно')->setValue($body[2]->a);
+        $lead->cf('Квиз. Когда планируете')->setValue($body[3]->a);
+        $lead->cf('Квиз. Почему заинтересовала')->setValue($body[5]->a);
+        $lead->cf('Квиз. Рассматривали ли уже')->setValue($body[6]->a);
+        $lead->cf('Квиз. Финансовые возможности')->setValue($body[4]->a);
+        $lead->cf('roistat')->setValue($roistat);
+
+        $lead->attachTag('marquiz');
+        $lead->save();
+
 //        Notes::addOne($lead, $text);
 //
 //        $model->lead_id = $lead->id;
