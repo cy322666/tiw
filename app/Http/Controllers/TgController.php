@@ -88,7 +88,9 @@ class TgController extends Controller
 
         $lead = Leads::create(
             $contact,
-            [],
+            [
+                'responsible_user_id' => $contact->responsible_user_id,
+            ],
             'Заявка Квиз Телеграм бот',
         );
 

@@ -130,7 +130,9 @@ class ToolsController extends Controller
         if (!$lead) {
 
             $lead = Leads::create(
-                $contact, [],
+                $contact, [
+                    'responsible_user_id' => $contact->responsible_user_id,
+            ],
                 $formname,
             );
         } else {
