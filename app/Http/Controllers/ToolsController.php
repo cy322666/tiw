@@ -101,8 +101,8 @@ class ToolsController extends Controller
 
         $body = $request->answers;
 
-        $phone = $request['contacts']['phone'];
-        $email = $request['contacts']['email'];
+        $phone = $request['contacts']['phone'] ?? null;
+        $email = $request['contacts']['email'] ?? null;
         $formname = 'Новая заявка с Marquiz';
         $name = $body[0]['a'];
         $city = $body[1]['a'];
