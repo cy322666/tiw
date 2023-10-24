@@ -149,11 +149,11 @@ class ToolsController extends Controller
         $lead->cf('Город')->setValue($city);
         $lead->cf('Марквиз дата заявки')->setValue(Carbon::now()->format('d.m.Y'));
 //
-//        $lead->cf('utm_term')->setValue($model->utm_term);
-//        $lead->cf('utm_source')->setValue($model->utm_source);
-//        $lead->cf('utm_medium')->setValue($model->utm_medium);
-//        $lead->cf('utm_content')->setValue($model->utm_content);
-//        $lead->cf('utm_campaign')->setValue($model->utm_campaign);
+        $lead->cf('utm_term')->setValue($request['extra']['utm']['term']);
+        $lead->cf('utm_source')->setValue($request['extra']['utm']['source']);
+        $lead->cf('utm_medium')->setValue($request['extra']['utm']['medium']);
+        $lead->cf('utm_content')->setValue($request['extra']['utm']['content']);
+        $lead->cf('utm_campaign')->setValue($request['extra']['utm']['campaign']);
 
         $lead->cf('Квиз. Насколько интересно')->setValue($body[2]['a']);
         $lead->cf('Квиз. Когда планируете')->setValue($body[3]['a']);
