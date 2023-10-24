@@ -8,6 +8,7 @@ use App\Services\amoCRM\Models\Contacts;
 use App\Services\amoCRM\Models\Leads;
 use App\Services\amoCRM\Models\Notes;
 use App\Services\amoCRM\Models\Tags;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -139,14 +140,14 @@ class ToolsController extends Controller
             try {
                 $amoApi->service->salesbots()->start(15949, $lead->id, $entity_type = 2);
 
-            }catch (\Throwable $e) {
+            } catch (\Throwable $e) {
 
-                dd($e->getMessage(), $e->getTraceAsString());
+                Log::info(__METHOD__, [$e->getMessage(), $e->getTraceAsString()]);
             }
-
         }
 
         $lead->cf('Город')->setValue($city);
+        $lead->cf('Марквиз дата заявки')->setValue(Carbon::now()->format('d.m.Y'));
 //
 //        $lead->cf('utm_term')->setValue($model->utm_term);
 //        $lead->cf('utm_source')->setValue($model->utm_source);
