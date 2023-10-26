@@ -147,11 +147,20 @@ class ToolsController extends Controller
         $lead->cf('Город')->setValue($city);
         $lead->cf('Марквиз дата заявки')->setValue(Carbon::now()->format('d.m.Y'));
 //
-        $lead->cf('utm_term')->setValue($request['extra']['utm']['term']);
-        $lead->cf('utm_source')->setValue($request['extra']['utm']['source']);
-        $lead->cf('utm_medium')->setValue($request['extra']['utm']['medium']);
-        $lead->cf('utm_content')->setValue($request['extra']['utm']['content']);
-        $lead->cf('utm_campaign')->setValue($request['extra']['utm']['campaign']);
+        if(!empty($request['extra']['utm']['term']))
+            $lead->cf('utm_term')->setValue($request['extra']['utm']['term']);
+
+        if(!empty($request['extra']['utm']['source']))
+            $lead->cf('utm_source')->setValue($request['extra']['utm']['source']);
+
+        if(!empty($request['extra']['utm']['medium']))
+            $lead->cf('utm_medium')->setValue($request['extra']['utm']['medium']);
+
+        if(!empty($request['extra']['utm']['content']))
+            $lead->cf('utm_content')->setValue($request['extra']['utm']['content']);
+
+        if(!empty($request['extra']['utm']['campaign']))
+            $lead->cf('utm_campaign')->setValue($request['extra']['utm']['campaign']);
 
         $lead->cf('Квиз. Насколько интересно')->setValue($body[2]['a']);
         $lead->cf('Квиз. Когда планируете')->setValue($body[3]['a']);
