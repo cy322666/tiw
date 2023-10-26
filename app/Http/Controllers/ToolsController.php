@@ -114,7 +114,7 @@ class ToolsController extends Controller
         ], $amoApi);
 
         if (!$contact)
-            $contact = Contacts::create($amoApi, $name);
+            $contact = Contacts::create($amoApi, $name ?? 'Неизвестно');
 
         $contact = $amoApi
             ->service
