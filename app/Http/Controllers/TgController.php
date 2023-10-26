@@ -68,6 +68,8 @@ class TgController extends Controller
         $name  = $request->name;
         $email = $request->email;
 
+        $formname = 'Заявка Квиз Телеграм бот';
+
         $contact = Contacts::search([
             'Телефоны' => [$phone],
             'Почта' => $email,
@@ -76,23 +78,22 @@ class TgController extends Controller
         if (!$contact)
             $contact = Contacts::create($amoApi, $name);
 
-        $contact = $amoApi
-            ->service
-            ->contacts()
-            ->find($contact->id);
-
         $contact = Contacts::update($contact, [
             'Телефоны' => [$phone],
             'Почта' => $email]
         );
 
-        $lead = Leads::create(
-            $contact,
-            [
+        $lead = Leads::search($contact, $amoApi, 6770222);
+
+        if (!$lead) {
+
+            $lead = Leads::create(
+                $contact, [
                 'responsible_user_id' => $contact->responsible_user_id,
-            ],
-            'Заявка Квиз Телеграм бот',
-        );
+            ], $formname);
+        }
+
+        $lead->cf('Ботквиз дата заявки')->setValue(Carbon::now()->format('d.m.Y'));
 
         $lead->attachTag('quiz');
         $lead->attachTag('bot');

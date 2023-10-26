@@ -133,9 +133,7 @@ class ToolsController extends Controller
             $lead = Leads::create(
                 $contact, [
                     'responsible_user_id' => $contact->responsible_user_id,
-            ],
-                $formname,
-            );
+            ], $formname);
         } else {
             try {
                 $amoApi->service->salesbots()->start(15949, $lead->id, $entity_type = 2);
