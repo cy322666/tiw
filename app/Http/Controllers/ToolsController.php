@@ -172,10 +172,12 @@ class ToolsController extends Controller
         $lead->attachTag('marquiz');
         $lead->save();
 
-//        Notes::addOne($lead, $text);
-//
-//        $model->lead_id = $lead->id;
-//        $model->contact_id = $contact->id;
-//        $model->save();
+        Notes::addOne($lead, implode("\n", [
+            $lead->cf('Квиз. Насколько интересно')->getValue(),
+            $lead->cf('Квиз. Когда планируете')->getValue(),
+            $lead->cf('Квиз. Почему заинтересовала')->getValue(),
+            $lead->cf('Квиз. Рассматривали ли уже')->getValue(),
+            $lead->cf('Квиз. Финансовые возможности')->getValue(),
+        ]));
     }
 }
