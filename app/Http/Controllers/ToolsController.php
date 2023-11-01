@@ -106,7 +106,7 @@ class ToolsController extends Controller
         $formname = 'Новая заявка с Marquiz';
         $name = $body[0]['a'];
         $city = $body[1]['a'];
-        $roistat = $request['extra']['cookies']['roistat_visit'];
+        $roistat = $request['extra']['cookies']['roistat_visit'] ?? null;
 
         $contact = Contacts::search([
             'Телефоны' => [$phone],
