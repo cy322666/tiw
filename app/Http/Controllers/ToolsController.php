@@ -145,7 +145,7 @@ class ToolsController extends Controller
         }
 
         $lead->cf('Город')->setValue($city);
-        $lead->cf('Марквиз дата заявки')->setValue(Carbon::now()->format('d.m.Y'));
+        $lead->cf('Марквиз дата заявки')->setValue(Carbon::now()->timezone('Europe/Moscow')->format('d.m.Y'));
 //
         if(!empty($request['extra']['utm']['term']))
             $lead->cf('utm_term')->setValue($request['extra']['utm']['term']);
