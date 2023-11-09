@@ -47,11 +47,16 @@ class ToolsController extends Controller
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function utms(Request $request)
     {
         Log::info(__METHOD__, $request->toArray());
 
         $leadId = $request->toArray()['leads']['add'][0]['id'];
+
+        sleep(3);
 
         $amoApi = (new Client(Account::query()->first()))
             ->init()
@@ -63,32 +68,64 @@ class ToolsController extends Controller
 
         $firstLead = Leads::searchOld($contact, $amoApi);
 
-        if (!$contact->cf('utm_source')->getValue()) {
+        if ($firstLead) {
 
-            $contact->cf('utm_source')->setValue($firstLead->cf('utm_source')->getValue());
+            if (!$contact->cf('utm_source')->getValue()) {
+
+                $contact->cf('utm_source')->setValue($firstLead->cf('utm_source')->getValue());
+            }
+
+            if (!$contact->cf('utm_medium')->getValue()) {
+
+                $contact->cf('utm_medium')->setValue($firstLead->cf('utm_medium')->getValue());
+            }
+
+            if (!$contact->cf('utm_content')->getValue()) {
+
+                $contact->cf('utm_content')->setValue($firstLead->cf('utm_content')->getValue());
+            }
+
+            if (!$contact->cf('utm_campaign')->getValue()) {
+
+                $contact->cf('utm_campaign')->setValue($firstLead->cf('utm_campaign')->getValue());
+            }
+
+            if (!$contact->cf('utm_term')->getValue()) {
+
+                $contact->cf('utm_term')->setValue($firstLead->cf('utm_term')->getValue());
+            }
+
+            $contact->save();
+
+            $contact = $amoApi->service->contacts()->find($contact->id);
+
+            if (!$contact->cf('utm_source')->getValue()) {
+
+                $lead->cf('first_utm_source')->setValue($contact->cf('utm_source')->getValue());
+            }
+
+            if (!$contact->cf('utm_medium')->getValue()) {
+
+                $lead->cf('first_utm_medium')->setValue($contact->cf('utm_medium')->getValue());
+            }
+
+            if (!$contact->cf('utm_content')->getValue()) {
+
+                $lead->cf('first_utm_content')->setValue($contact->cf('utm_content')->getValue());
+            }
+
+            if (!$contact->cf('utm_campaign')->getValue()) {
+
+                $lead->cf('first_utm_campaign')->setValue($contact->cf('utm_campaign')->getValue());
+            }
+
+            if (!$contact->cf('utm_term')->getValue()) {
+
+                $lead->cf('first_utm_term')->setValue($contact->cf('utm_term')->getValue());
+            }
+
+            $lead->save();
         }
-
-        if (!$contact->cf('utm_medium')->getValue()) {
-
-            $contact->cf('utm_medium')->setValue($firstLead->cf('utm_medium')->getValue());
-        }
-
-        if (!$contact->cf('utm_content')->getValue()) {
-
-            $contact->cf('utm_content')->setValue($firstLead->cf('utm_content')->getValue());
-        }
-
-        if (!$contact->cf('utm_campaign')->getValue()) {
-
-            $contact->cf('utm_campaign')->setValue($firstLead->cf('utm_campaign')->getValue());
-        }
-
-        if (!$contact->cf('utm_term')->getValue()) {
-
-            $contact->cf('utm_term')->setValue($firstLead->cf('utm_term')->getValue());
-        }
-
-        $contact->save();
     }
 
     public function marquiz(Request $request)
