@@ -95,7 +95,7 @@ class TgController extends Controller
 
         $lead->cf('Ботквиз дата заявки')->setValue(Carbon::now()->format('d.m.Y'));
 
-        $lead->attachTag('quiz');
+        $lead->attachTag('Лид-бот SMM');
         $lead->attachTag('bot');
         $lead->save();
 
