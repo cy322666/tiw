@@ -54,7 +54,7 @@ class ToolsController extends Controller
     {
         Log::info(__METHOD__, $request->toArray());
 
-        $leadId = $request->toArray()['leads']['add'][0]['id'] ?? $request->toArray()['leads']['status'][0]['id'];
+        $leadId = $request->leads['add'][0]['id'] ?? $request->leads['status'][0]['id'];
 
         sleep(3);
 
@@ -99,27 +99,27 @@ class ToolsController extends Controller
 
             $contact = $amoApi->service->contacts()->find($contact->id);
 
-            if (!$contact->cf('utm_source')->getValue()) {
+            if ($contact->cf('utm_source')->getValue()) {
 
                 $lead->cf('first_utm_source')->setValue($contact->cf('utm_source')->getValue());
             }
 
-            if (!$contact->cf('utm_medium')->getValue()) {
+            if ($contact->cf('utm_medium')->getValue()) {
 
                 $lead->cf('first_utm_medium')->setValue($contact->cf('utm_medium')->getValue());
             }
 
-            if (!$contact->cf('utm_content')->getValue()) {
+            if ($contact->cf('utm_content')->getValue()) {
 
                 $lead->cf('first_utm_content')->setValue($contact->cf('utm_content')->getValue());
             }
 
-            if (!$contact->cf('utm_campaign')->getValue()) {
+            if ($contact->cf('utm_campaign')->getValue()) {
 
                 $lead->cf('first_utm_campaign')->setValue($contact->cf('utm_campaign')->getValue());
             }
 
-            if (!$contact->cf('utm_term')->getValue()) {
+            if ($contact->cf('utm_term')->getValue()) {
 
                 $lead->cf('first_utm_term')->setValue($contact->cf('utm_term')->getValue());
             }
