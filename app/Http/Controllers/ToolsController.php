@@ -35,7 +35,7 @@ class ToolsController extends Controller
 
         if ($leads->count() > 1) {
             $leadsActive = $leads->filter(function ($lead) {
-                if ($lead->status_id != 142 && $lead->status_id != 143) {
+                if ($lead->status_id != 142 && $lead->status_id != 143 && $lead->pipeline_id == 6770222) {
                     return $lead;
                 }
             });
