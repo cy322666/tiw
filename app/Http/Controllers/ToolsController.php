@@ -149,7 +149,7 @@ class ToolsController extends Controller
     public function cron()
     {
         $marquizs = Marquiz::query()
-            ->where('created_at', '>', Carbon::now()->subMinutes(2)->format('Y-m-d H:i:s'))
+            ->where('created_at', '<', Carbon::now()->subMinutes(2)->format('Y-m-d H:i:s'))
             ->where('status', 0)
             ->limit(10)
             ->get();
