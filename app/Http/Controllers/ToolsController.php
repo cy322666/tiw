@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\Marquiz;
 use App\Services\amoCRM\Client;
 use App\Services\amoCRM\Models\Contacts;
 use App\Services\amoCRM\Models\Leads;
@@ -10,6 +11,7 @@ use App\Services\amoCRM\Models\Notes;
 use App\Services\amoCRM\Models\Tags;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
 class ToolsController extends Controller
@@ -132,89 +134,29 @@ class ToolsController extends Controller
     {
         Log::info(__METHOD__, $request->toArray());
 
-        $amoApi = (new Client(Account::query()->first()))
-            ->init()
-            ->initLogs();
-
         $body = $request->answers;
 
-        $phone = $request['contacts']['phone'] ?? null;
-        $email = $request['contacts']['email'] ?? null;
-        $formname = 'Новая заявка с Marquiz';
-        $name = $body[0]['a'];
-        $city = $body[1]['a'];
-        $roistat = $request['extra']['cookies']['roistat_visit'] ?? null;
-
-        $contact = Contacts::search([
-            'Телефоны' => [$phone],
-            'Почта' => $email,
-        ], $amoApi);
-
-        if (!$contact)
-            $contact = Contacts::create($amoApi, $name ?? 'Неизвестно');
-
-        $contact = $amoApi
-            ->service
-            ->contacts()
-            ->find($contact->id);
-
-        $contact = Contacts::update($contact, [
-            'Телефоны' => [$phone],
-            'Почта' => $email,
+        Marquiz::query()->create([
+            'body' => json_encode($body),
+            'phone' => $request['contacts']['phone'] ?? null,
+            'email' => $request['contacts']['email'] ?? null,
+            'name' => $body[0]['a'],
+            'city' => $body[1]['a'],
+            'roistat' => $request['extra']['cookies']['roistat_visit'] ?? null,
         ]);
+    }
 
-        $lead = Leads::search($contact, $amoApi, 6770222);
+    public function cron()
+    {
+        $marquizs = Marquiz::query()
+            ->where('created_at', Carbon::now()->subMinutes(3)->format('Y-m-d H:i:s'))
+            ->where('status', 0)
+            ->limit(10)
+            ->get();
 
-        if (!$lead) {
+        foreach ($marquizs as $marquiz) {
 
-            $lead = Leads::create(
-                $contact, [
-                    'responsible_user_id' => $contact->responsible_user_id,
-            ], $formname);
-        } else {
-            try {
-                $amoApi->service->salesbots()->start(15949, $lead->id, $entity_type = 2);
-
-            } catch (\Throwable $e) {
-
-                Log::info(__METHOD__, [$e->getMessage(), $e->getTraceAsString()]);
-            }
+            Artisan::call('app:marquiz-send', ['marquiz' => $marquiz->id]);
         }
-
-        $lead->cf('Город')->setValue($city);
-        $lead->cf('Марквиз дата заявки')->setValue(Carbon::now()->timezone('Europe/Moscow')->format('d.m.Y'));
-//
-        if(!empty($request['extra']['utm']['term']))
-            $lead->cf('utm_term')->setValue($request['extra']['utm']['term']);
-
-        if(!empty($request['extra']['utm']['source']))
-            $lead->cf('utm_source')->setValue($request['extra']['utm']['source']);
-
-        if(!empty($request['extra']['utm']['medium']))
-            $lead->cf('utm_medium')->setValue($request['extra']['utm']['medium']);
-
-        if(!empty($request['extra']['utm']['content']))
-            $lead->cf('utm_content')->setValue($request['extra']['utm']['content']);
-
-        if(!empty($request['extra']['utm']['campaign']))
-            $lead->cf('utm_campaign')->setValue($request['extra']['utm']['campaign']);
-
-        $lead->cf('Квиз. Насколько интересно')->setValue($body[2]['a']);
-        $lead->cf('Квиз. Когда планируете')->setValue($body[3]['a']);
-        $lead->cf('Квиз. Почему заинтересовала')->setValue($body[5]['a']);
-        $lead->cf('Квиз. Рассматривали ли уже')->setValue($body[6]['a']);
-        $lead->cf('Квиз. Финансовые возможности')->setValue($body[4]['a']);
-        $lead->cf('roistat')->setValue($roistat);
-
-        $lead->attachTag('marquiz');
-        $lead->save();
-
-        Notes::addOne($lead, implode("\n", [
-            $lead->cf('Квиз. Насколько интересно')->getValue(),
-            $lead->cf('Квиз. Когда планируете')->getValue(),
-            $lead->cf('Квиз. Почему заинтересовала')->getValue(),
-            $lead->cf('Квиз. Рассматривали ли уже')->getValue(),
-            $lead->cf('Квиз. Финансовые возможности')->getValue(),
-        ]));
     }
 }
