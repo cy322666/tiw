@@ -48,7 +48,7 @@ class MarquizSend extends Command
         ], $amoApi);
 
         if (!$contact)
-            $contact = Contacts::create($amoApi, $name ?? 'Неизвестно');
+            $contact = Contacts::create($amoApi, $marquiz->name ?? 'Неизвестно');
 
         $contact = $amoApi
             ->service
