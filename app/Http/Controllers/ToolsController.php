@@ -137,7 +137,7 @@ class ToolsController extends Controller
         $body = $request->answers;
 
         Marquiz::query()->create([
-            'body' => json_encode($body),
+            'body' => json_encode($request->toArray()),
             'phone' => $request['contacts']['phone'] ?? null,
             'email' => $request['contacts']['email'] ?? null,
             'name' => $body[0]['a'],
