@@ -96,11 +96,11 @@ class MarquizSend extends Command
         if(!empty($body['extra']['utm']['campaign']))
             $lead->cf('utm_campaign')->setValue($body['extra']['utm']['campaign']);
 
-        $lead->cf('Квиз. Насколько интересно')->setValue($body[2]['a']);
-        $lead->cf('Квиз. Когда планируете')->setValue($body[3]['a']);
-        $lead->cf('Квиз. Почему заинтересовала')->setValue($body[5]['a']);
-        $lead->cf('Квиз. Рассматривали ли уже')->setValue($body[6]['a']);
-        $lead->cf('Квиз. Финансовые возможности')->setValue($body[4]['a']);
+        $lead->cf('Квиз. Насколько интересно')->setValue($body['answers'][2]['a']);
+        $lead->cf('Квиз. Когда планируете')->setValue($body['answers'][3]['a']);
+        $lead->cf('Квиз. Почему заинтересовала')->setValue($body['answers'][5]['a']);
+        $lead->cf('Квиз. Рассматривали ли уже')->setValue($body['answers'][6]['a']);
+        $lead->cf('Квиз. Финансовые возможности')->setValue($body['answers'][4]['a']);
         $lead->cf('roistat')->setValue($marquiz->roistat);
 
         $lead->attachTag('marquiz');
