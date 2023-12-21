@@ -33,6 +33,8 @@ Route::post('tools/marquiz', [ToolsController::class, 'marquiz']);
 
 Route::get('tools/marquiz/cron', [ToolsController::class, 'cron']);
 
+Route::get('tools/task', [ToolsController::class, 'task']);
+
 Route::post('tg/link', [TgController::class, 'link']);
 
 Route::post('tg/hook', [TgController::class, 'hook']);

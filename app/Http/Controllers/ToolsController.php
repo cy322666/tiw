@@ -159,4 +159,70 @@ class ToolsController extends Controller
             Artisan::call('app:marquiz-send', ['marquiz' => $marquiz->id]);
         }
     }
+
+    /**
+        //приходит таска
+        //проверяем время
+        //если рабочее то ставим
+        //если не рабочее то ставим на утро
+     *
+     * @throws \Exception
+     */
+    public function task(Request $request)
+    {
+        Log::info(__METHOD__, $request->toArray());
+
+        $amoApi = (new Client(Account::query()->first()))->init();
+
+        $leadId = 16858759;//$request->toArray()['leads']['add'][0]['id'] ?? $request->toArray()['leads']['status'][0]['id'];
+
+        $lead = $amoApi->service->leads()->find($leadId);
+
+        $workAt = Carbon::parse(Carbon::now()->addHours(2)->format('Y-m-d').' 10:00:00');
+        $workTo = Carbon::parse(Carbon::now()->addHours(2)->format('Y-m-d').' 19:00:00');
+
+        if (Carbon::now()->addHours(2) > $workAt) {
+
+            if (Carbon::now()->addHours(2) < $workTo) {
+                //10-19
+
+                Log::info(__METHOD__.' : work time');
+
+                $task = $amoApi->service->tasks()->create();
+                $task->text = 'Новая задача';
+                $task->element_type = 2;
+                $task->element_id = $leadId;
+                $task->responsible_user_id = $lead->responsible_user_id;
+                $task->duration = 60 * 60;
+                $task->complete_till_at = Carbon::now()->addMinute()->timestamp;
+                $task->save();
+            } else {
+                //19-00
+
+                Log::info(__METHOD__.' : past work');
+
+                $task = $amoApi->service->tasks()->create();
+                $task->text = 'Новая задача';
+                $task->element_type = 2;
+                $task->element_id = $leadId;
+                $task->responsible_user_id = $lead->responsible_user_id;
+                $task->duration = 60 * 60;
+                $task->complete_till_at = $workAt->addDay()->timestamp;
+                $task->save();
+            }
+        } else {
+            //00-10
+
+            Log::info(__METHOD__.' : pre work');
+
+            $task = $amoApi->service->tasks()->create();
+            $task->text = 'Новая задача';
+            $task->element_type = 2;
+            $task->element_id = $leadId;
+            $task->responsible_user_id = $lead->responsible_user_id;
+            $task->duration = 60 * 60;
+            $task->complete_till_at = $workAt->timestamp;
+            $task->save();
+        }
+    }
 }
