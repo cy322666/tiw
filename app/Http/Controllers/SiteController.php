@@ -42,6 +42,8 @@ class SiteController extends Controller
 
         $leadActive = Leads::search($contact, $amoApi, [6770222]);
 
+        sleep(3);
+
         if (!$leadActive)
             $lead = Leads::create(
                 $contact,
