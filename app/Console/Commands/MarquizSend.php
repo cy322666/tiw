@@ -34,88 +34,42 @@ class MarquizSend extends Command
      */
     public function handle()
     {
+        $marquiz = Marquiz::query()->find($this->argument('marquiz'));
+
         $amoApi = (new Client(Account::query()->first()))
             ->init()
             ->initLogs();
 
-        $marquiz = Marquiz::query()->find($this->argument('marquiz'));
+        $lead = $amoApi->service->ajax()->get('/api/v4/leads?order[created_at]=desc&limit=1');
 
-        $body = json_decode($marquiz->body, true);
+        $lead = $amoApi->service->leads()->find($lead->_embedded->leads[0]->id);
 
-        $contact = Contacts::search([
-            'Телефон' => $marquiz->phone,
-            'Почта' => $marquiz->email,
-        ], $amoApi);
+        $body = json_decode($marquiz->body);
 
-        if (!$contact)
-            $contact = Contacts::create($amoApi, $marquiz->name ?? 'Неизвестно');
+        $lead->cf('Квиз. Насколько интересно')->setValue($body->Насколько_вам_интересен_бизнес_на_кофейнях_самообслуживания);
+        $lead->cf('Квиз. Когда планируете')->setValue($body->Когда_планируете_открывать_кофейню);
+        $lead->cf('Квиз. Почему заинтересовала')->setValue($body->Почему_вас_заинтересовали_кофейни_самообслуживания_Какая_у_вас_цель);
+        $lead->cf('Квиз. Финансовые возможности')->setValue($body->Имеете_ли_вы_финансовые_возможности_до_500_тыс__на_открытие_кофейни);
 
-        $contact = $amoApi
-            ->service
-            ->contacts()
-            ->find($contact->id);
-
-        $contact = Contacts::update($contact, [
-            'Телефоны' => [$marquiz->phone],
-            'Почта' => $marquiz->email,
-        ]);
-
-        $lead = Leads::search($contact, $amoApi, 6770222);
-
-        if (!$lead) {
-
-            $lead = Leads::create(
-                $contact, [
-                'responsible_user_id' => $contact->responsible_user_id,
-            ], 'Новый лид из Marquiz');
-        } else {
-            try {
-                $amoApi->service->salesbots()->start(15949, $lead->id, $entity_type = 2);
-
-            } catch (\Throwable $e) {
-
-                Log::info(__METHOD__, [$e->getMessage(), $e->getTraceAsString()]);
-            }
-        }
-
-        $lead->cf('Город')->setValue($marquiz->city);
-        $lead->cf('Марквиз дата заявки')->setValue(Carbon::now()->timezone('Europe/Moscow')->format('d.m.Y'));
-//
-        if(!empty($body['extra']['utm']['term']))
-            $lead->cf('utm_term')->setValue($body['extra']['utm']['term']);
-
-        if(!empty($body['extra']['utm']['source']))
-            $lead->cf('utm_source')->setValue($body['extra']['utm']['source']);
-
-        if(!empty($body['extra']['utm']['medium']))
-            $lead->cf('utm_medium')->setValue($body['extra']['utm']['medium']);
-
-        if(!empty($body['extra']['utm']['content']))
-            $lead->cf('utm_content')->setValue($body['extra']['utm']['content']);
-
-        if(!empty($body['extra']['utm']['campaign']))
-            $lead->cf('utm_campaign')->setValue($body['extra']['utm']['campaign']);
-
-        $lead->cf('Квиз. Насколько интересно')->setValue($body['answers'][2]['a'] ?? '');
-        $lead->cf('Квиз. Когда планируете')->setValue($body['answers'][3]['a'] ?? '');
-        $lead->cf('Квиз. Почему заинтересовала')->setValue($body['answers'][5]['a'] ?? '');
-        $lead->cf('Квиз. Рассматривали ли уже')->setValue($body['answers'][6]['a'] ?? '');
-        $lead->cf('Квиз. Финансовые возможности')->setValue($body['answers'][4]['a'] ?? '');
-        $lead->cf('roistat')->setValue($marquiz->roistat);
+        $lead->cf('Марквиз дата заявки')
+            ->setValue(
+                Carbon::now()
+                    ->timezone('Europe/Moscow')
+                    ->format('d.m.Y')
+            );
 
         $lead->attachTag('marquiz');
         $lead->save();
 
-        Notes::addOne($lead, implode("\n", [
-            $lead->cf('Квиз. Насколько интересно')->getValue(),
-            $lead->cf('Квиз. Когда планируете')->getValue(),
-            $lead->cf('Квиз. Почему заинтересовала')->getValue(),
-            $lead->cf('Квиз. Рассматривали ли уже')->getValue(),
-            $lead->cf('Квиз. Финансовые возможности')->getValue(),
-        ]));
+        try {
+            $amoApi->service->salesbots()->start(15949, $lead->id, $entity_type = 2);
+
+        } catch (\Throwable $e) {
+
+            Log::info(__METHOD__, [$e->getMessage(), $e->getTraceAsString()]);
+        }
 
         $marquiz->lead_id = $lead->id;
-        $marquiz->contact_id = $contact->id;
         $marquiz->status = 1;
         $marquiz->save();
     }
