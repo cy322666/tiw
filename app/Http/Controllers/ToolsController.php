@@ -130,11 +130,59 @@ class ToolsController extends Controller
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function marquiz(Request $request)
     {
         Log::info(__METHOD__, $request->toArray());
 
-        $body = $request->answers;
+        $amoApi = (new Client(Account::query()->first()))
+            ->init()
+            ->initLogs();
+
+        $phone = $request->phone;
+//        $formname = '';
+        $name = $request->name;
+        $email = $request->email;
+//        $city = '';
+//        $roistat = '';
+
+        $contact = Contacts::search(['Телефоны' => [$phone]], $amoApi);
+
+        if (!$contact)
+            $contact = Contacts::create($amoApi, $name);
+
+        $contact = $amoApi
+            ->service
+            ->contacts()
+            ->find($contact->id);
+
+        $lead = Leads::create(
+            $contact, [],
+//            ['status_id' => $statusId,],
+            $formname,
+        );
+
+
+        $lead->cf('Город')->setValue($request->city);
+
+        $lead->cf('utm_term')->setValue($model->utm_term);
+        $lead->cf('utm_source')->setValue($model->utm_source);
+        $lead->cf('utm_medium')->setValue($model->utm_medium);
+        $lead->cf('utm_content')->setValue($model->utm_content);
+        $lead->cf('utm_campaign')->setValue($model->utm_campaign);
+
+        $lead = Tags::add($lead, 'marquiz');
+
+        $lead->attachTag('tilda');
+        $lead->save();
+
+        Notes::addOne($lead, $text);
+
+        $model->lead_id = $lead->id;
+        $model->contact_id = $contact->id;
+        $model->save();
 
         Marquiz::query()->create([
             'body' => json_encode($request->toArray()),
@@ -161,10 +209,10 @@ class ToolsController extends Controller
     }
 
     /**
-        //приходит таска
-        //проверяем время
-        //если рабочее то ставим
-        //если не рабочее то ставим на утро
+    //приходит таска
+    //проверяем время
+    //если рабочее то ставим
+    //если не рабочее то ставим на утро
      *
      * @throws \Exception
      */

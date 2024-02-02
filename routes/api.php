@@ -29,7 +29,7 @@ Route::post('tools/active', [ToolsController::class, 'active']);
 
 Route::post('tools/utms', [ToolsController::class, 'utms']);
 
-Route::post('tools/marquiz', [ToolsController::class, 'marquiz']);
+Route::any('tools/marquiz', [ToolsController::class, 'marquiz']);
 
 Route::post('tools/marquiz/cron', [ToolsController::class, 'cron']);
 
