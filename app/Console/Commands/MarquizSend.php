@@ -34,7 +34,7 @@ class MarquizSend extends Command
      */
     public function handle()
     {
-        $marquiz = Marquiz::query()->find($this->argument('marquiz'));
+        $marquiz = Marquiz::query()->find($this->argument('marquiz'))->first();
 
         $amoApi = (new Client(Account::query()->first()))
             ->init()
