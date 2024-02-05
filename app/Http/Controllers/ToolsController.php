@@ -137,75 +137,30 @@ class ToolsController extends Controller
     {
         Log::info(__METHOD__, $request->toArray());
 
-        $amoApi = (new Client(Account::query()->first()))
-            ->init()
-            ->initLogs();
-
-        $phone = $request->phone;
-//        $formname = '';
-        $name = $request->name;
-        $email = $request->email;
-//        $city = '';
-//        $roistat = '';
-
-        $contact = Contacts::search(['Телефоны' => [$phone]], $amoApi);
-
-        if (!$contact)
-            $contact = Contacts::create($amoApi, $name);
-
-        $contact = $amoApi
-            ->service
-            ->contacts()
-            ->find($contact->id);
-
-        $lead = Leads::create(
-            $contact, [],
-//            ['status_id' => $statusId,],
-            $formname,
-        );
-
-
-        $lead->cf('Город')->setValue($request->city);
-
-        $lead->cf('utm_term')->setValue($model->utm_term);
-        $lead->cf('utm_source')->setValue($model->utm_source);
-        $lead->cf('utm_medium')->setValue($model->utm_medium);
-        $lead->cf('utm_content')->setValue($model->utm_content);
-        $lead->cf('utm_campaign')->setValue($model->utm_campaign);
-
-        $lead = Tags::add($lead, 'marquiz');
-
-        $lead->attachTag('tilda');
-        $lead->save();
-
-        Notes::addOne($lead, $text);
-
-        $model->lead_id = $lead->id;
-        $model->contact_id = $contact->id;
-        $model->save();
-
-        Marquiz::query()->create([
+        $marquiz = Marquiz::query()->create([
             'body' => json_encode($request->toArray()),
             'phone' => $request['contacts']['phone'] ?? null,
             'email' => $request['contacts']['email'] ?? null,
-            'name' => $body[0]['a'],
-            'city' => $body[1]['a'],
-            'roistat' => $request['extra']['cookies']['roistat_visit'] ?? null,
+//            'name' => $body[0]['a'],
+//            'city' => $body[1]['a'],
+//            'roistat' => $request['extra']['cookies']['roistat_visit'] ?? null,
         ]);
+
+        Artisan::call('app:marquiz-send', ['marquiz' => $marquiz]);
     }
 
     public function cron()
     {
-        $marquizs = Marquiz::query()
-            ->where('created_at', '<', Carbon::now()->subMinutes(2)->format('Y-m-d H:i:s'))
-            ->where('status', 0)
-            ->limit(10)
-            ->get();
-
-        foreach ($marquizs as $marquiz) {
-
-            Artisan::call('app:marquiz-send', ['marquiz' => $marquiz->id]);
-        }
+//        $marquizs = Marquiz::query()
+//            ->where('created_at', '<', Carbon::now()->subMinutes(2)->format('Y-m-d H:i:s'))
+//            ->where('status', 0)
+//            ->limit(10)
+//            ->get();
+//
+//        foreach ($marquizs as $marquiz) {
+//
+//            Artisan::call('app:marquiz-send', ['marquiz' => $marquiz->id]);
+//        }
     }
 
     /**
