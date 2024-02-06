@@ -58,7 +58,7 @@ class MarquizSend extends Command
                     ->format('d.m.Y')
             );
 
-        $lead->attachTag('marquiz');
+        $lead->attachTag('Квиз');
         $lead->save();
 
         try {
@@ -72,5 +72,12 @@ class MarquizSend extends Command
         $marquiz->lead_id = $lead->id;
         $marquiz->status = 1;
         $marquiz->save();
+
+        Notes::add($lead, [
+            $body->Насколько_вам_интересен_бизнес_на_кофейнях_самообслуживания,
+            $body->Когда_планируете_открывать_кофейню,
+            $body->Почему_вас_заинтересовали_кофейни_самообслуживания_Какая_у_вас_цель,
+            $body->Имеете_ли_вы_финансовые_возможности_до_500_тыс__на_открытие_кофейни,
+        ]);
     }
 }
