@@ -44,6 +44,13 @@ class MarquizSend extends Command
 
         $lead = $amoApi->service->leads()->find($lead->_embedded->leads[0]->id);
 
+        if ($lead->cf('Источник')->getValue() !== 'Tilda') {
+
+            Log::alert(__METHOD__, ['last lead !== tilda']);
+
+            exit;
+        }
+
         $body = json_decode($marquiz->body);
 
         $lead->cf('Квиз. Насколько интересно')->setValue($body->Насколько_вам_интересен_бизнес_на_кофейнях_самообслуживания);
